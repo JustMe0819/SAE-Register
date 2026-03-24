@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
@@ -48,3 +49,7 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+=======
+# SAE-Register
+SAE-Register est une application mobile en React Native permettant de centraliser, consulter et ajouter des SAÉ (MMI2/MMI3). Elle propose un classement par année, domaine et note, avec images et liens vers les projets, via une API REST connectée à un backend Spring Boot.
+>>>>>>> dc162358a81041a1067d9922e30a53522444d526
