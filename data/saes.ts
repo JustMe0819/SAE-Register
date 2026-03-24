@@ -149,7 +149,7 @@ const RAW_501: [string, string, any][] = [
   ['CARPENTIER', 'Timothé', 13.05],
   ['MONLAY', 'Tom', null],
   ['ZAIEM', 'Sarah', 12.75],
-  ['BROUILLARD', 'Thilya', 11.75],
+  ['BROUILLARD', 'Thylia', 11.75],
   ['BUISSET', 'Nicolas', 15.25],
   ['HENRIQUES MATEUS', 'Léonardo', null],
   ['THIABAS HOULAI', 'Keyla', 10.95],
