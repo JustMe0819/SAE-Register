@@ -313,7 +313,7 @@ export default function HomeScreen() {
         {/* ── Header ── */}
         <Animated.View style={[s.header, headerEntrance, headerAnim]}>
           <Text style={[s.eyebrow, { color: t.textMuted }]}>IUT GUSTAVE EIFFEL · MEAUX</Text>
-          <Text style={[s.wordmark, { color: t.text }]}>SAé{'\n'}Register</Text>
+          <Text style={[s.wordmark, { color: t.text }]}>SAE{'\n'}Register</Text>
           <View style={[s.pill, { backgroundColor: t.accentBg, borderColor: t.accent }]}>
             <Text style={[s.pillText, { color: t.accent }]}>MMI2 & MMI3</Text>
           </View>
