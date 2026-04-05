@@ -48,4 +48,4 @@ Les étudiants avec la même note sont automatiquement regroupés.
 
 ## Auteur
 
-Thilya Brouillard — BUT MMI3, IUT Gustave Eiffel Meaux
+Thylia Brouillard — BUT MMI3, IUT Gustave Eiffel Meaux
