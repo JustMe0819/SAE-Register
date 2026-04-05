@@ -1,55 +1,51 @@
-<<<<<<< HEAD
-# Welcome to your Expo app 👋
+# SAé Register
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Application de gestion des SAé du BUT MMI – IUT Gustave Eiffel, Meaux.  
+Permet d'importer des fichiers XLSX/PDF de notes et de consulter les groupes, classements et statistiques.
 
-## Get started
+## Prérequis
 
-1. Install dependencies
+- [Node.js](https://nodejs.org/) v18+
+- [Java JDK 17](https://adoptium.net/fr/temurin/releases/?version=17)
+- [XAMPP](https://www.apachefriends.org/fr/index.html)
 
-   ```bash
-   npm install
-   ```
+## Installation
 
-2. Start the app
+**1. Créer la base de données**
 
-   ```bash
-   npx expo start
-   ```
+Démarrer XAMPP → ouvrir phpMyAdmin → créer une base `sae_register` en `utf8mb4_unicode_ci`.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+**2. Lancer le back-end**
 
 ```bash
-npm run reset-project
+cd back-end/sae-register
+.\mvnw.cmd spring-boot:run
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Serveur disponible sur `http://localhost:8080`. Les tables sont créées automatiquement.
 
-## Learn more
+**3. Lancer le front-end**
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm install
+npx expo start --web
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Ouvrir `http://localhost:8081`.
 
-## Join the community
+## Utilisation
 
-Join our community of developers creating universal apps.
+Aller sur **Importer** → choisir un fichier XLSX ou PDF → remplir les infos → envoyer.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-=======
-# SAE-Register
-SAE-Register est une application mobile en React Native permettant de centraliser, consulter et ajouter des SAÉ (MMI2/MMI3). Elle propose un classement par année, domaine et note, avec images et liens vers les projets, via une API REST connectée à un backend Spring Boot.
->>>>>>> dc162358a81041a1067d9922e30a53522444d526
+### Format XLSX accepté
+
+| Format | Colonnes |
+|--------|----------|
+| A | `Nom` · `Note` |
+| B | `Nom` · `Prénom` · `Note` |
+
+Les étudiants avec la même note sont automatiquement regroupés.
+
+## Auteur
+
+Thilya Brouillard — BUT MMI3, IUT Gustave Eiffel Meaux
