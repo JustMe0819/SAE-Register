@@ -1,4 +1,4 @@
-export const API_BASE = 'http://192.168.1.93:8080';  // ← CHANGE ICI
+export const API_BASE = 'http://localhost:8080';  
 
 export const API = {
   saes:      `${API_BASE}/api/saes`,
