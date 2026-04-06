@@ -1,4 +1,4 @@
-export const API_BASE = 'https://sae-register-production.up.railway.app/';  
+export const API_BASE = 'https://sae-register-production.up.railway.app';  
 
 export const API = {
   saes:      `${API_BASE}/api/saes`,
