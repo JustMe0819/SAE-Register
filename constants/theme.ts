@@ -1,5 +1,3 @@
-import { useColorScheme } from 'react-native';
-
 // ── Domain palette ──────────────────────────────────────────────────────────
 export const DOMAIN_META: Record<string, { color: string; icon: string }> = {
   Web:    { color: '#E8613A', icon: '🌐' },
@@ -11,7 +9,6 @@ export const DOMAIN_META: Record<string, { color: string; icon: string }> = {
   Autre:  { color: '#6B7280', icon: '📁' },
 };
 
-// ── Dark theme ───────────────────────────────────────────────────────────────
 const dark = {
   isDark: true,
   bg:            '#0B0D14',
@@ -38,36 +35,8 @@ const dark = {
   danger:        '#E05252',
 };
 
-// ── Light theme ──────────────────────────────────────────────────────────────
-const light = {
-  isDark: false,
-  bg:            '#F2F1ED',
-  surface:       '#FFFFFF',
-  surfaceHigh:   '#E9E7E0',
-  border:        'rgba(0,0,0,0.07)',
-  borderStrong:  'rgba(0,0,0,0.14)',
-  text:          '#1A1826',
-  textSub:       '#5A576E',
-  textMuted:     '#B0AEBF',
-  accent:        '#C8501E',
-  accentBg:      'rgba(200,80,30,0.1)',
-  gradient:      ['#E9E7E0', '#F2F1ED'] as string[],
-  tabBar:        '#FFFFFF',
-  tabBarBorder:  'rgba(0,0,0,0.07)',
-  inputBg:       '#E9E7E0',
-  chipBg:        '#E9E7E0',
-  chipText:      '#5A576E',
-  chipActive:    'rgba(200,80,30,0.12)',
-  chipActiveBorder: '#C8501E',
-  chipActiveText:   '#C8501E',
-  success:       '#1E8C5A',
-  warning:       '#C47A1A',
-  danger:        '#C03030',
-};
-
 export type Theme = typeof dark;
 
 export function useTheme(): Theme {
-  const scheme = useColorScheme();
-  return scheme === 'dark' ? dark : light;
+  return dark;
 }
