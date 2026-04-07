@@ -18,25 +18,33 @@ public class Sae {
     private Long id;
 
     @Column(nullable = false)
-    private String code;       
+    private String code;
 
     @Column(nullable = false)
-    private String name;         
+    private String name;
 
     @Column(nullable = false)
-    private String year;        
+    private String year;
 
     private int semester;
 
-    private String domain;       
+    private String domain;
 
-    private String ue;           
+    private String ue;
 
     private String description;
+
+    private String competences;
+
+    private String dateDebut;
+
+    private String dateFin;
 
     private String siteUrl;
 
     private String repoUrl;
+
+    private Double tauxReussite;
 
     @OneToMany(mappedBy = "sae", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

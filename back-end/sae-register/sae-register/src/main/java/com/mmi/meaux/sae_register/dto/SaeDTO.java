@@ -15,8 +15,12 @@ public class SaeDTO {
     private String domain;
     private String ue;
     private String description;
+    private String competences;
+    private String dateDebut;
+    private String dateFin;
     private String siteUrl;
     private String repoUrl;
+    private Double tauxReussite;
     private List<GroupDTO> groups;
     private StatsDTO stats;
 

@@ -40,7 +40,6 @@ public class SaeService {
                 .build()
         ).toList();
 
-        // Stats
         List<Double> grades = groups.stream()
                 .filter(g -> g.getGrade() != null)
                 .map(GroupDTO::getGrade)
@@ -56,6 +55,13 @@ public class SaeService {
         OptionalDouble min = grades.stream().mapToDouble(Double::doubleValue).min();
         OptionalDouble max = grades.stream().mapToDouble(Double::doubleValue).max();
 
+        double tauxReussite = graded > 0
+            ? (double) sae.getGroups().stream()
+                .filter(g -> g.getGrade() != null && g.getGrade() >= 10)
+                .flatMap(g -> g.getStudents().stream())
+                .count() / graded * 100
+            : 0.0;
+
         return SaeDTO.builder()
                 .id(sae.getId())
                 .code(sae.getCode())
@@ -65,8 +71,12 @@ public class SaeService {
                 .domain(sae.getDomain())
                 .ue(sae.getUe())
                 .description(sae.getDescription())
+                .competences(sae.getCompetences())
+                .dateDebut(sae.getDateDebut())
+                .dateFin(sae.getDateFin())
                 .siteUrl(sae.getSiteUrl())
                 .repoUrl(sae.getRepoUrl())
+                .tauxReussite(Math.round(tauxReussite * 100.0) / 100.0)
                 .groups(groups)
                 .stats(SaeDTO.StatsDTO.builder()
                         .total(total)

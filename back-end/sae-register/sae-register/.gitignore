@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### MDP ###
+back-end/sae-register/sae-register/src/main/resources/application.properties

@@ -25,12 +25,19 @@ public class ImportService {
 
     public Sae importFile(MultipartFile file, String code, String name,
                           String year, int semester, String domain, String ue,
-                          String description) throws IOException {
+                          String description, String competences,
+                          String dateDebut, String dateFin,
+                          String siteUrl, String repoUrl) throws IOException {
 
         Sae sae = Sae.builder()
                 .code(code).name(name).year(year)
                 .semester(semester).domain(domain)
                 .ue(ue).description(description)
+                .competences(competences)
+                .dateDebut(dateDebut)
+                .dateFin(dateFin)
+                .siteUrl(siteUrl)
+                .repoUrl(repoUrl)
                 .build();
         sae = saeRepository.save(sae);
 
@@ -58,7 +65,7 @@ public class ImportService {
 
     private List<RawRow> parseFile(MultipartFile file) throws IOException {
         String fn = file.getOriginalFilename() == null ? "" : file.getOriginalFilename().toLowerCase();
-        if (fn.endsWith(".pdf"))                        return parsePDF(file);
+        if (fn.endsWith(".pdf"))                         return parsePDF(file);
         if (fn.endsWith(".xlsx") || fn.endsWith(".xls")) return parseXLSX(file);
         throw new IllegalArgumentException("Format non supporté. Utilisez XLSX ou PDF.");
     }
@@ -71,9 +78,9 @@ public class ImportService {
 
             for (Cell cell : header) {
                 String h = cell.getStringCellValue().trim().toLowerCase();
-                if (h.equals("nom"))                              colNom    = cell.getColumnIndex();
+                if (h.equals("nom"))                               colNom    = cell.getColumnIndex();
                 else if (h.equals("prénom") || h.equals("prenom")) colPrenom = cell.getColumnIndex();
-                else if (h.equals("note") || h.equals("grade"))   colNote   = cell.getColumnIndex();
+                else if (h.equals("note") || h.equals("grade"))    colNote   = cell.getColumnIndex();
             }
             if (colNom == -1 || colNote == -1)
                 throw new IllegalArgumentException("Colonnes 'Nom' et/ou 'Note' introuvables.");

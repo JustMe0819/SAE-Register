@@ -18,29 +18,27 @@ public class ImportController {
     private final ImportService importService;
     private final SaeService saeService;
 
-    // POST /api/import
-    // multipart/form-data :
-    //   file       → le fichier XLSX ou PDF
-    //   code       → "SAé 303"
-    //   name       → "Conception de documents web"
-    //   year       → "MMI2" ou "MMI3"
-    //   semester   → 3
-    //   domain     → "Web"
-    //   ue         → "UE3.1"
-    //   description → (optionnel)
     @PostMapping
     public ResponseEntity<SaeDTO> importFile(
-            @RequestParam("file")        MultipartFile file,
-            @RequestParam("code")        String code,
-            @RequestParam("name")        String name,
-            @RequestParam("year")        String year,
-            @RequestParam("semester")    int semester,
-            @RequestParam("domain")      String domain,
-            @RequestParam("ue")          String ue,
-            @RequestParam(value = "description", defaultValue = "") String description
+            @RequestParam("file")                                    MultipartFile file,
+            @RequestParam("code")                                    String code,
+            @RequestParam("name")                                    String name,
+            @RequestParam("year")                                    String year,
+            @RequestParam("semester")                                int semester,
+            @RequestParam("domain")                                  String domain,
+            @RequestParam("ue")                                      String ue,
+            @RequestParam(value = "description",  defaultValue = "") String description,
+            @RequestParam(value = "competences",  defaultValue = "") String competences,
+            @RequestParam(value = "dateDebut",    defaultValue = "") String dateDebut,
+            @RequestParam(value = "dateFin",      defaultValue = "") String dateFin,
+            @RequestParam(value = "siteUrl",      defaultValue = "") String siteUrl,
+            @RequestParam(value = "repoUrl",      defaultValue = "") String repoUrl
     ) {
         try {
-            Sae sae = importService.importFile(file, code, name, year, semester, domain, ue, description);
+            Sae sae = importService.importFile(
+                file, code, name, year, semester, domain, ue,
+                description, competences, dateDebut, dateFin, siteUrl, repoUrl
+            );
             return ResponseEntity.ok(saeService.getById(sae.getId()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
