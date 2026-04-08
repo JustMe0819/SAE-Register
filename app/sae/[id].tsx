@@ -121,7 +121,7 @@ export default function SAEDetailScreen() {
         {/* Hero */}
         <Animated.View style={[s.hero, heroAnim, { backgroundColor: t.surface, borderColor: t.border }]}>
           {sae.illustration && (
-            <Image source={{ uri: 'http://localhost:8080' + sae.illustration }} style={s.heroImage} />
+            <Image source={{ uri: API_BASE + sae.illustration }} style={s.heroImage} />
           )}
           <View style={[s.domTag, { backgroundColor: meta.color + '22' }]}>
             <Text style={[s.domText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>

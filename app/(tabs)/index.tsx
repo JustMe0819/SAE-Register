@@ -19,7 +19,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { API } from '../../constants/api';
+import { API, API_BASE } from '../../constants/api';
 import { DOMAIN_META, useTheme } from '../../constants/theme';
 import type { SaeDTO } from '../../constants/types';
 
@@ -121,7 +121,7 @@ function SAECard({ sae, index, t }: {
           <Text style={[scard.tagText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>
         </View>
         {sae.illustration && (
-          <Image source={{ uri: 'http://localhost:8080' + sae.illustration }} style={scard.image} />
+          <Image source={{ uri: API_BASE + sae.illustration }} style={scard.image} />
         )}
         <Text style={[scard.code, { color: t.textMuted }]}>{sae.code}</Text>
         <Text style={[scard.name, { color: t.text }]} numberOfLines={2}>{sae.name}</Text>
