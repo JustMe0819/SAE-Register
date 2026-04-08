@@ -3,48 +3,26 @@
 Application de gestion des SAé du BUT MMI – IUT Gustave Eiffel, Meaux.  
 Permet d'importer des fichiers XLSX/PDF de notes et de consulter les groupes, classements et statistiques.
 
-## Prérequis
+## Déploiement actuel
 
-- [Node.js](https://nodejs.org/) v18+
-- [Java JDK 17](https://adoptium.net/fr/temurin/releases/?version=17)
-- [XAMPP](https://www.apachefriends.org/fr/index.html)
+Le front est hébergé sur Vercel, le back sur Railway et la base de données sur Aiven.
 
-## Installation
+Aucune installation locale n’est nécessaire pour l’utilisateur final.
 
-**1. Créer la base de données**
-
-Démarrer XAMPP → ouvrir phpMyAdmin → créer une base `sae_register` en `utf8mb4_unicode_ci`.
-
-**2. Lancer le back-end**
-
-```bash
-cd back-end/sae-register
-.\mvnw.cmd spring-boot:run
-```
-
-Serveur disponible sur `http://localhost:8080`. Les tables sont créées automatiquement.
-
-**3. Lancer le front-end**
-
-```bash
-npm install
-npx expo start --web
-```
-
-Ouvrir `http://localhost:8081`.
+> Ce README décrit la version hébergée. Les instructions locales seront ajoutées ultérieurement.
 
 ## Utilisation
 
-Aller sur **Importer** → choisir un fichier XLSX ou PDF → remplir les infos → envoyer.
+Aller sur **Importer** → choisir un fichier XLSX ou PDF → choisir une image d'illustration → remplir les infos → valider.
+Vous pourrez voir ensuite les élèves, leurs notes, leur classement ainsi que le lien de leur site hébergé et leur répo github s'ils sont ajouter.
+Vous pourrez aussi chercher directement un élève via l'onglet **Recherche**.
 
-### Format XLSX accepté
+### Format accepté
 
 | Format | Colonnes |
 |--------|----------|
 | A | `Nom` · `Note` |
 | B | `Nom` · `Prénom` · `Note` |
-
-Les étudiants avec la même note sont automatiquement regroupés.
 
 ## Auteur
 
