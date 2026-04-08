@@ -1,6 +1,6 @@
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Dimensions, StatusBar,
+  TouchableOpacity, Dimensions, StatusBar, Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -111,6 +111,9 @@ function SAECard({ sae, index, t }: {
         <View style={[scard.tag, { backgroundColor: meta.color + '25' }]}>
           <Text style={[scard.tagText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>
         </View>
+        {sae.illustration && (
+          <Image source={{ uri: sae.illustration }} style={scard.image} />
+        )}
         <Text style={[scard.code, { color: t.textMuted }]}>{sae.code}</Text>
         <Text style={[scard.name, { color: t.text }]} numberOfLines={2}>{sae.name}</Text>
         <Text style={[scard.badge, { color: t.textSub, backgroundColor: t.surfaceHigh }]}>
@@ -137,6 +140,7 @@ const scard = StyleSheet.create({
   wrap:     { borderRadius: 18, padding: 14, borderWidth: 1, gap: 7 },
   tag:      { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   tagText:  { fontSize: 11, fontWeight: '700' },
+  image:    { width: 40, height: 40, borderRadius: 8, alignSelf: 'center' },
   code:     { fontSize: 10, fontWeight: '600', letterSpacing: 0.6, textTransform: 'uppercase' },
   name:     { fontSize: 14, fontWeight: '700', lineHeight: 19 },
   badge:    { fontSize: 10, borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3, overflow: 'hidden', alignSelf: 'flex-start' },

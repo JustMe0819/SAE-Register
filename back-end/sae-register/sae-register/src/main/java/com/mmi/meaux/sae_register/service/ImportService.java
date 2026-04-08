@@ -14,20 +14,31 @@ import org.apache.pdfbox.Loader;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.*;
+import java.nio.file.*;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ImportService {
 
     private final SaeRepository saeRepository;
-    private final SaeGroupRepository groupRepository;
     private final StudentRepository studentRepository;
 
     public Sae importFile(MultipartFile file, String code, String name,
                           String year, int semester, String domain, String ue,
                           String description, String competences,
                           String dateDebut, String dateFin,
-                          String siteUrl, String repoUrl) throws IOException {
+                          String siteUrl, String repoUrl, MultipartFile illustration) throws IOException {
+
+        String illustrationUrl = null;
+        if (illustration != null && !illustration.isEmpty()) {
+            String filename = UUID.randomUUID().toString() + "_" + illustration.getOriginalFilename();
+            String uploadDir = System.getProperty("user.dir") + "/uploads/images/";
+            Path path = Paths.get(uploadDir + filename);
+            Files.createDirectories(path.getParent());
+            Files.write(path, illustration.getBytes());
+            illustrationUrl = "/uploads/images/" + filename;
+        }
 
         Sae sae = Sae.builder()
                 .code(code).name(name).year(year)
@@ -38,28 +49,24 @@ public class ImportService {
                 .dateFin(dateFin)
                 .siteUrl(siteUrl)
                 .repoUrl(repoUrl)
+                .illustration(illustrationUrl)
                 .build();
         sae = saeRepository.save(sae);
 
         List<RawRow> rows = parseFile(file);
 
-        Map<String, List<String>> buckets = new LinkedHashMap<>();
         for (RawRow row : rows) {
-            String key = row.grade() == null ? "__null_" + row.fullName() : String.valueOf(row.grade());
-            buckets.computeIfAbsent(key, k -> new ArrayList<>()).add(row.fullName());
+            Student student = Student.builder()
+                    .fullName(row.fullName())
+                    .grade(row.grade())
+                    .siteUrl(siteUrl)
+                    .repoUrl(repoUrl)
+                    .sae(sae)
+                    .build();
+            sae.getStudents().add(student);
         }
 
-        for (Map.Entry<String, List<String>> entry : buckets.entrySet()) {
-            String key = entry.getKey();
-            Double grade = key.startsWith("__null_") ? null : parseGrade(key);
-
-            SaeGroup group = SaeGroup.builder().grade(grade).sae(sae).build();
-            group = groupRepository.save(group);
-
-            for (String member : entry.getValue()) {
-                studentRepository.save(Student.builder().fullName(member).group(group).build());
-            }
-        }
+        saeRepository.save(sae);
         return sae;
     }
 

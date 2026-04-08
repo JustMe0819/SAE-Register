@@ -16,10 +16,16 @@ public class Student {
     private Long id;
 
     @Column(nullable = false)
-    private String fullName;     
+    private String fullName;
+
+    private Double grade;
+
+    private String siteUrl;
+
+    private String repoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
+    @JoinColumn(name = "sae_id", nullable = false)
     @ToString.Exclude
-    private SaeGroup group;
+    private Sae sae;
 }

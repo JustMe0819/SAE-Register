@@ -22,6 +22,7 @@ export default function ImportScreen() {
   const insets  = useSafeAreaInsets();
   const router  = useRouter();
   const fileInputRef = useRef<any>(null);
+  const imageInputRef = useRef<any>(null); // Nouveau ref pour l'input image web
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [nativeUri, setNativeUri] = useState<string | null>(null); // mobile only
@@ -29,6 +30,11 @@ export default function ImportScreen() {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState<string | null>(null);
   const [result, setResult]       = useState<SaeDTO | null>(null);
+
+  // Nouveaux états pour l'image d'illustration
+  const [imageFileName, setImageFileName] = useState<string | null>(null);
+  const [imageNativeUri, setImageNativeUri] = useState<string | null>(null); // mobile only
+  const [imageWebFile, setImageWebFile] = useState<File | null>(null); // web only
 
   const [code, setCode]         = useState('');
   const [name, setName]         = useState('');
@@ -45,6 +51,9 @@ export default function ImportScreen() {
 
   const zoneScale = useSharedValue(1);
   const zoneAnim  = useAnimatedStyle(() => ({ transform: [{ scale: zoneScale.value }] }));
+
+  const imageZoneScale = useSharedValue(1); // Nouveau pour l'animation de la zone image
+  const imageZoneAnim = useAnimatedStyle(() => ({ transform: [{ scale: imageZoneScale.value }] }));
 
   // ── Sélection du fichier ────────────────────────────────────────────────────
   async function pickFile() {
@@ -74,12 +83,44 @@ export default function ImportScreen() {
     }
   }
 
+  // ── Sélection de l'image d'illustration ─────────────────────────────────────
+  async function pickImage() {
+    setError(null);
+    setResult(null);
+
+    if (Platform.OS === 'web') {
+      // Sur web : déclenche l'input image HTML caché
+      imageInputRef.current?.click();
+    } else {
+      // Sur mobile natif : DocumentPicker pour images
+      try {
+        const res = await DocumentPicker.getDocumentAsync({
+          type: ['image/*'], // Accepte tous les types d'images
+          copyToCacheDirectory: true,
+        });
+        if (res.canceled) return;
+        setImageFileName(res.assets[0].name);
+        setImageNativeUri(res.assets[0].uri);
+      } catch (e: any) {
+        setError(e.message);
+      }
+    }
+  }
+
   // ── Callback input file web ─────────────────────────────────────────────────
   function onWebFileChange(e: any) {
     const f: File = e.target.files?.[0];
     if (!f) return;
     setWebFile(f);
     setFileName(f.name);
+  }
+
+  // ── Callback input image web ───────────────────────────────────────────────
+  function onWebImageChange(e: any) {
+    const f: File = e.target.files?.[0];
+    if (!f) return;
+    setImageWebFile(f);
+    setImageFileName(f.name);
   }
 
   // ── Envoi au back ───────────────────────────────────────────────────────────
@@ -96,12 +137,20 @@ export default function ImportScreen() {
         // Web : on utilise le vrai objet File du navigateur
         if (!webFile) { setError('Fichier introuvable.'); return; }
         formData.append('file', webFile);
+        // Ajouter l'image si présente
+        if (imageWebFile) {
+          formData.append('illustration', imageWebFile);
+        }
       } else {
         // Mobile natif : URI Expo
         const fileType = fileName.endsWith('.pdf')
           ? 'application/pdf'
           : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         formData.append('file', { uri: nativeUri, name: fileName, type: fileType } as any);
+        // Ajouter l'image si présente
+        if (imageFileName && imageNativeUri) {
+          formData.append('illustration', { uri: imageNativeUri, name: imageFileName, type: 'image/*' } as any);
+        }
       }
 
       formData.append('code', code);
@@ -155,6 +204,7 @@ export default function ImportScreen() {
   }
 
   const hasFile = !!fileName;
+  const hasImage = !!imageFileName;
 
   return (
     <View style={[s.root, { backgroundColor: t.bg, paddingTop: insets.top }]}>
@@ -170,6 +220,17 @@ export default function ImportScreen() {
         />
       )}
 
+      {/* Input image HTML caché — web seulement */}
+      {Platform.OS === 'web' && (
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={onWebImageChange}
+        />
+      )}
+
       <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <Animated.View entering={FadeIn.duration(300)}>
@@ -181,7 +242,7 @@ export default function ImportScreen() {
             Choisissez un fichier{' '}
             <Text style={{ color: t.accent, fontWeight: '800' }}>XLSX</Text> ou{' '}
             <Text style={{ color: t.accent, fontWeight: '800' }}>PDF</Text>,
-            remplissez les infos et envoyez.
+            une image d'illustration, puis remplissez les infos et validez.
           </Text>
         </Animated.View>
 
@@ -204,6 +265,28 @@ export default function ImportScreen() {
               {fileName ?? 'Appuyer pour choisir un fichier'}
             </Text>
             <Text style={[s.zoneHint, { color: t.textMuted }]}>XLSX · XLS · PDF</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* Zone image d'illustration */}
+        <Animated.View entering={FadeInDown.delay(125).springify()} style={imageZoneAnim}>
+          <TouchableOpacity
+            style={[s.zone, {
+              borderColor: hasImage ? t.accent : t.borderStrong,
+              backgroundColor: hasImage ? t.accentBg : t.surface,
+            }]}
+            onPressIn={() => { imageZoneScale.value = withSpring(0.97); }}
+            onPressOut={() => { imageZoneScale.value = withSpring(1); }}
+            onPress={pickImage}
+            activeOpacity={1}
+          >
+            <Animated.Text key={hasImage ? 'has' : 'no'} entering={ZoomIn.duration(250)} style={s.zoneIcon}>
+              {hasImage ? '🖼️' : '📷'}
+            </Animated.Text>
+            <Text style={[s.zonePrimary, { color: t.text }]}>
+              {imageFileName ?? 'Appuyer pour choisir une image d\'illustration'}
+            </Text>
+            <Text style={[s.zoneHint, { color: t.textMuted }]}>JPG · PNG · GIF · etc.</Text>
           </TouchableOpacity>
         </Animated.View>
 
@@ -282,7 +365,7 @@ export default function ImportScreen() {
         >
           {loading
             ? <ActivityIndicator color="#fff" />
-            : <Text style={s.submitText}>Envoyer au serveur</Text>
+            : <Text style={s.submitText}>Valider</Text>
           }
         </TouchableOpacity>
 

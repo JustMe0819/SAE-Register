@@ -44,9 +44,11 @@ public class Sae {
 
     private String repoUrl;
 
+    private String illustration;
+
     private Double tauxReussite;
 
     @OneToMany(mappedBy = "sae", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<SaeGroup> groups = new ArrayList<>();
+    private List<Student> students = new ArrayList<>();
 }

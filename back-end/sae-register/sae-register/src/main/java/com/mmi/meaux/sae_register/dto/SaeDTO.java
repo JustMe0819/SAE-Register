@@ -20,9 +20,20 @@ public class SaeDTO {
     private String dateFin;
     private String siteUrl;
     private String repoUrl;
+    private String illustration;
     private Double tauxReussite;
-    private List<GroupDTO> groups;
+    private List<StudentDTO> students;
     private StatsDTO stats;
+
+    @Data
+    @Builder
+    public static class StudentDTO {
+        private Long id;
+        private String fullName;
+        private Double grade;
+        private String siteUrl;
+        private String repoUrl;
+    }
 
     @Data
     @Builder

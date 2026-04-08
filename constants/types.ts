@@ -4,6 +4,14 @@ export interface GroupDTO {
   members: string[];
 }
 
+export interface StudentDTO {
+  id: number;
+  fullName: string;
+  grade: number | null;
+  siteUrl: string | null;
+  repoUrl: string | null;
+}
+
 export interface StatsDTO {
   total: number;
   graded: number;
@@ -26,7 +34,8 @@ export interface SaeDTO {
   dateFin: string | null;
   siteUrl: string | null;
   repoUrl: string | null;
+  illustration: string | null;
   tauxReussite: number | null;
-  groups: GroupDTO[];
+  students: StudentDTO[];
   stats: StatsDTO;
 }

@@ -1,15 +1,23 @@
-import {
-  View, Text, StyleSheet, TextInput,
-  TouchableOpacity, ScrollView,
-} from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
-  useSharedValue, useAnimatedStyle, withSpring, withTiming, FadeInDown,
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
 } from 'react-native-reanimated';
-import { useTheme, DOMAIN_META } from '../constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { API } from '../constants/api';
+import { DOMAIN_META, useTheme } from '../constants/theme';
 import type { SaeDTO } from '../constants/types';
 
 const YEARS   = ['Tous', 'MMI2', 'MMI3'] as const;
@@ -56,8 +64,9 @@ function SAERow({ sae, index, t }: {
         <View style={row.top}>
           <View style={[row.tag, { backgroundColor: meta.color + '22' }]}>
             <Text style={[row.tagText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>
-          </View>
-          <Text style={[row.year, { color: t.textSub }]}>{sae.year} · S{sae.semester}</Text>
+          </View>        {sae.illustration && (
+          <Image source={{ uri: 'http://localhost:8080' + sae.illustration }} style={row.image} />
+        )}          <Text style={[row.year, { color: t.textSub }]}>{sae.year} · S{sae.semester}</Text>
         </View>
         <Text style={[row.code, { color: t.textMuted }]}>{sae.code}</Text>
         <Text style={[row.name, { color: t.text }]}>{sae.name}</Text>
@@ -78,6 +87,7 @@ const row = StyleSheet.create({
   top:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   tag:  { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   tagText: { fontSize: 11, fontWeight: '700' },
+  image: { width: 40, height: 40, borderRadius: 8, alignSelf: 'center' },
   year: { fontSize: 11 },
   code: { fontSize: 10, letterSpacing: 0.5, textTransform: 'uppercase' },
   name: { fontSize: 15, fontWeight: '700' },

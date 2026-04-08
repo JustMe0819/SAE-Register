@@ -1,9 +1,8 @@
 package com.mmi.meaux.sae_register.service;
 
-import com.mmi.meaux.sae_register.dto.GroupDTO;
 import com.mmi.meaux.sae_register.dto.SaeDTO;
+import com.mmi.meaux.sae_register.dto.SaeDTO.StudentDTO;
 import com.mmi.meaux.sae_register.entity.Sae;
-import com.mmi.meaux.sae_register.entity.SaeGroup;
 import com.mmi.meaux.sae_register.repository.SaeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,22 +32,23 @@ public class SaeService {
     }
 
     private SaeDTO toDTO(Sae sae) {
-        List<GroupDTO> groups = sae.getGroups().stream().map(g -> GroupDTO.builder()
-                .id(g.getId())
-                .grade(g.getGrade())
-                .members(g.getStudents().stream().map(s -> s.getFullName()).toList())
+        List<StudentDTO> students = sae.getStudents().stream().map(s -> StudentDTO.builder()
+                .id(s.getId())
+                .fullName(s.getFullName())
+                .grade(s.getGrade())
+                .siteUrl(s.getSiteUrl())
+                .repoUrl(s.getRepoUrl())
                 .build()
         ).toList();
 
-        List<Double> grades = groups.stream()
-                .filter(g -> g.getGrade() != null)
-                .map(GroupDTO::getGrade)
+        List<Double> grades = students.stream()
+                .filter(s -> s.getGrade() != null)
+                .map(StudentDTO::getGrade)
                 .toList();
 
-        int total  = groups.stream().mapToInt(g -> g.getMembers().size()).sum();
-        int graded = (int) sae.getGroups().stream()
-                .filter(g -> g.getGrade() != null)
-                .flatMap(g -> g.getStudents().stream())
+        int total  = students.size();
+        int graded = (int) students.stream()
+                .filter(s -> s.getGrade() != null)
                 .count();
 
         OptionalDouble avg = grades.stream().mapToDouble(Double::doubleValue).average();
@@ -56,9 +56,8 @@ public class SaeService {
         OptionalDouble max = grades.stream().mapToDouble(Double::doubleValue).max();
 
         double tauxReussite = graded > 0
-            ? (double) sae.getGroups().stream()
-                .filter(g -> g.getGrade() != null && g.getGrade() >= 10)
-                .flatMap(g -> g.getStudents().stream())
+            ? (double) students.stream()
+                .filter(s -> s.getGrade() != null && s.getGrade() >= 10)
                 .count() / graded * 100
             : 0.0;
 
@@ -76,8 +75,9 @@ public class SaeService {
                 .dateFin(sae.getDateFin())
                 .siteUrl(sae.getSiteUrl())
                 .repoUrl(sae.getRepoUrl())
+                .illustration(sae.getIllustration())
                 .tauxReussite(Math.round(tauxReussite * 100.0) / 100.0)
-                .groups(groups)
+                .students(students)
                 .stats(SaeDTO.StatsDTO.builder()
                         .total(total)
                         .graded(graded)

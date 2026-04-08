@@ -32,12 +32,13 @@ public class ImportController {
             @RequestParam(value = "dateDebut",    defaultValue = "") String dateDebut,
             @RequestParam(value = "dateFin",      defaultValue = "") String dateFin,
             @RequestParam(value = "siteUrl",      defaultValue = "") String siteUrl,
-            @RequestParam(value = "repoUrl",      defaultValue = "") String repoUrl
+            @RequestParam(value = "repoUrl",      defaultValue = "") String repoUrl,
+            @RequestParam(value = "illustration", required = false) MultipartFile illustration
     ) {
         try {
             Sae sae = importService.importFile(
                 file, code, name, year, semester, domain, ue,
-                description, competences, dateDebut, dateFin, siteUrl, repoUrl
+                description, competences, dateDebut, dateFin, siteUrl, repoUrl, illustration
             );
             return ResponseEntity.ok(saeService.getById(sae.getId()));
         } catch (Exception e) {
