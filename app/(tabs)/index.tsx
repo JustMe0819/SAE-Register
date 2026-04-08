@@ -1,12 +1,12 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Dimensions,
   Image,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View
 } from 'react-native';
 import Animated, {
@@ -22,9 +22,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { API, API_BASE } from '../../constants/api';
 import { DOMAIN_META, useTheme } from '../../constants/theme';
 import type { SaeDTO } from '../../constants/types';
-
-const { width } = Dimensions.get('window');
-const COL = (width - 48 - 10) / 2;
 
 // ── Animated counter ──────────────────────────────────────────────────────────
 function AnimatedNumber({ value, delay = 0, decimals = 0, t }: {
@@ -91,8 +88,8 @@ const sc = StyleSheet.create({
 });
 
 // ── SAE card ──────────────────────────────────────────────────────────────────
-function SAECard({ sae, index, t }: {
-  sae: SaeDTO; index: number; t: ReturnType<typeof useTheme>;
+function SAECard({ sae, index, t, colWidth }: {
+  sae: SaeDTO; index: number; t: ReturnType<typeof useTheme>; colWidth: number;
 }) {
   const router   = useRouter();
   const meta     = DOMAIN_META[sae.domain] ?? DOMAIN_META['Autre'];
@@ -109,7 +106,7 @@ function SAECard({ sae, index, t }: {
     transform: [{ translateY: translateY.value }, { scale: scale.value }],
   }));
   return (
-    <Animated.View style={[anim, { width: COL }]}>
+    <Animated.View style={[anim, { flexBasis: colWidth, maxWidth: colWidth, width: colWidth }]}> 
       <TouchableOpacity
         style={[scard.wrap, { backgroundColor: t.surface, borderColor: t.border }]}
         activeOpacity={1}
@@ -121,7 +118,7 @@ function SAECard({ sae, index, t }: {
           <Text style={[scard.tagText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>
         </View>
         {sae.illustration && (
-          <Image source={{ uri: API_BASE + sae.illustration }} style={scard.image} />
+          <Image source={{ uri: API_BASE + sae.illustration }} style={scard.image} resizeMode="cover" />
         )}
         <Text style={[scard.code, { color: t.textMuted }]}>{sae.code}</Text>
         <Text style={[scard.name, { color: t.text }]} numberOfLines={2}>{sae.name}</Text>
@@ -149,7 +146,7 @@ const scard = StyleSheet.create({
   wrap:     { borderRadius: 18, padding: 14, borderWidth: 1, gap: 7 },
   tag:      { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   tagText:  { fontSize: 11, fontWeight: '700' },
-  image:    { width: 40, height: 40, borderRadius: 8, alignSelf: 'center' },
+  image:    { width: '100%', height: 120, borderRadius: 14, alignSelf: 'center' },
   code:     { fontSize: 10, fontWeight: '600', letterSpacing: 0.6, textTransform: 'uppercase' },
   name:     { fontSize: 14, fontWeight: '700', lineHeight: 19 },
   badge:    { fontSize: 10, borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3, overflow: 'hidden', alignSelf: 'flex-start' },
@@ -256,6 +253,9 @@ export default function HomeScreen() {
     .sort((a, b) => (b.st.grade ?? 0) - (a.st.grade ?? 0))
     .slice(0, 5);
 
+  const { width } = useWindowDimensions();
+  const columnWidth = width >= 720 ? (width - 48 - 10) / 2 : width >= 520 ? (width - 40) / 2 : width - 36;
+
   return (
     <View style={[s.root, { backgroundColor: t.bg }]}>
       <StatusBar barStyle={t.isDark ? 'light-content' : 'dark-content'} />
@@ -304,7 +304,7 @@ export default function HomeScreen() {
             </View>
             <View style={s.grid}>
               {saes.map((sae, i) => (
-                <SAECard key={sae.id} sae={sae} index={i} t={t} />
+                <SAECard key={sae.id} sae={sae} index={i} t={t} colWidth={columnWidth} />
               ))}
             </View>
           </View>
@@ -397,7 +397,7 @@ const s = StyleSheet.create({
   sectionHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   sectionTitle:{ fontSize: 19, fontWeight: '800', letterSpacing: -0.4 },
   sectionLink: { fontSize: 13, fontWeight: '700' },
-  grid:    { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  grid:    { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 10 },
   actRow:  { flexDirection: 'row', gap: 10 },
   topRow:   { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1, marginBottom: 8 },
   topRank:  { fontSize: 20, width: 28, textAlign: 'center' },
