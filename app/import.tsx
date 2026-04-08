@@ -37,6 +37,11 @@ export default function ImportScreen() {
   const [domain, setDomain]     = useState('Web');
   const [ue, setUe]             = useState('');
   const [desc, setDesc]         = useState('');
+  const [competences, setCompetences] = useState('');
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
+  const [siteUrl, setSiteUrl] = useState('');
+  const [repoUrl, setRepoUrl] = useState('');
 
   const zoneScale = useSharedValue(1);
   const zoneAnim  = useAnimatedStyle(() => ({ transform: [{ scale: zoneScale.value }] }));
@@ -106,6 +111,11 @@ export default function ImportScreen() {
       formData.append('domain', domain);
       formData.append('ue', ue);
       formData.append('description', desc);
+      formData.append('competences', competences);
+      formData.append('dateDebut', dateDebut);
+      formData.append('dateFin', dateFin);
+      formData.append('siteUrl', siteUrl);
+      formData.append('repoUrl', repoUrl);
 
       const res = await fetch(API.import, {
         method: 'POST',
@@ -228,6 +238,31 @@ export default function ImportScreen() {
             style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border, height: 72, textAlignVertical: 'top', paddingTop: 10 }]}
             placeholder="Objectifs, contexte…" placeholderTextColor={t.textMuted}
             value={desc} onChangeText={setDesc} multiline />
+
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Compétences (optionnel)</Text>
+          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
+            placeholder="Compétences visées" placeholderTextColor={t.textMuted}
+            value={competences} onChangeText={setCompetences} />
+
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Date de début (optionnel)</Text>
+          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
+            placeholder="YYYY-MM-DD" placeholderTextColor={t.textMuted}
+            value={dateDebut} onChangeText={setDateDebut} />
+
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Date de fin (optionnel)</Text>
+          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
+            placeholder="YYYY-MM-DD" placeholderTextColor={t.textMuted}
+            value={dateFin} onChangeText={setDateFin} />
+
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>URL du site (optionnel)</Text>
+          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
+            placeholder="https://..." placeholderTextColor={t.textMuted}
+            value={siteUrl} onChangeText={setSiteUrl} />
+
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>URL du repo (optionnel)</Text>
+          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
+            placeholder="https://github.com/..." placeholderTextColor={t.textMuted}
+            value={repoUrl} onChangeText={setRepoUrl} />
         </Animated.View>
 
         {/* Erreur */}

@@ -1,5 +1,3 @@
-// Types partagés qui correspondent exactement à ce que renvoie le back
-
 export interface GroupDTO {
   id: number;
   grade: number | null;
@@ -23,8 +21,12 @@ export interface SaeDTO {
   domain: string;
   ue: string;
   description: string | null;
+  competences: string | null;
+  dateDebut: string | null;
+  dateFin: string | null;
   siteUrl: string | null;
   repoUrl: string | null;
+  tauxReussite: number | null;
   groups: GroupDTO[];
   stats: StatsDTO;
 }

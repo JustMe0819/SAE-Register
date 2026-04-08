@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
@@ -73,29 +73,76 @@ export default function SAEDetailScreen() {
       <Animated.ScrollView onScroll={onScroll} scrollEventThrottle={16}
         contentContainerStyle={[s.scroll, { paddingTop: insets.top + 8 }]}
         showsVerticalScrollIndicator={false}>
+
         <Animated.View entering={FadeIn.duration(300)}>
           <TouchableOpacity onPress={() => router.back()} style={s.back}>
             <Text style={[s.backText, { color: t.textSub }]}>← Retour</Text>
           </TouchableOpacity>
         </Animated.View>
+
+        {/* Hero */}
         <Animated.View style={[s.hero, heroAnim, { backgroundColor: t.surface, borderColor: t.border }]}>
           <View style={[s.domTag, { backgroundColor: meta.color + '22' }]}>
             <Text style={[s.domText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>
           </View>
           <Text style={[s.code, { color: t.textSub }]}>{sae.code}</Text>
           <Text style={[s.heroName, { color: t.text }]}>{sae.name}</Text>
-          <Text style={[s.heroBadge, { color: t.textSub }]}>{sae.year} · Semestre {sae.semester} · {sae.ue}</Text>
-          {sae.description && <Text style={[s.desc, { color: t.textSub }]}>{sae.description}</Text>}
+          <Text style={[s.heroBadge, { color: t.textSub }]}>
+            {sae.year} · Semestre {sae.semester} · {sae.ue}
+          </Text>
+
+          {/* Dates */}
+          {(sae.dateDebut || sae.dateFin) && (
+            <Text style={[s.meta, { color: t.textSub }]}>
+              📅 {sae.dateDebut ?? '?'} → {sae.dateFin ?? '?'}
+            </Text>
+          )}
+
+          {/* Description */}
+          {sae.description && (
+            <Text style={[s.desc, { color: t.textSub }]}>{sae.description}</Text>
+          )}
+
+          {/* Compétences */}
+          {sae.competences && (
+            <View style={[s.infoBox, { backgroundColor: t.surfaceHigh }]}>
+              <Text style={[s.infoLabel, { color: t.textMuted }]}>COMPÉTENCES</Text>
+              <Text style={[s.infoValue, { color: t.text }]}>{sae.competences}</Text>
+            </View>
+          )}
+
+          {/* Liens */}
+          <View style={s.linksRow}>
+            {sae.siteUrl ? (
+              <TouchableOpacity
+                style={[s.linkBtn, { borderColor: t.accent }]}
+                onPress={() => Linking.openURL(sae.siteUrl!)}
+              >
+                <Text style={[s.linkText, { color: t.accent }]}>🌐 Site</Text>
+              </TouchableOpacity>
+            ) : null}
+            {sae.repoUrl ? (
+              <TouchableOpacity
+                style={[s.linkBtn, { borderColor: t.accent }]}
+                onPress={() => Linking.openURL(sae.repoUrl!)}
+              >
+                <Text style={[s.linkText, { color: t.accent }]}>💻 Code</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         </Animated.View>
+
+        {/* Stats */}
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={s.statsRow}>
             {[
-              { v: String(sae.stats.total),         l: 'étudiants' },
-              { v: String(sae.stats.graded),         l: 'notés' },
-              { v: String(sae.groups.length),        l: 'groupes' },
-              { v: sae.stats.avg?.toFixed(2) ?? '–', l: 'moyenne', accent: true },
-              { v: sae.stats.max?.toFixed(2) ?? '–', l: 'max' },
-              { v: sae.stats.min?.toFixed(2) ?? '–', l: 'min' },
+              { v: String(sae.stats.total),              l: 'étudiants' },
+              { v: String(sae.stats.graded),             l: 'notés' },
+              { v: String(sae.groups.length),            l: 'groupes' },
+              { v: sae.stats.avg?.toFixed(2) ?? '–',     l: 'moyenne', accent: true },
+              { v: sae.stats.max?.toFixed(2) ?? '–',     l: 'max' },
+              { v: sae.stats.min?.toFixed(2) ?? '–',     l: 'min' },
+              { v: sae.tauxReussite !== null ? `${sae.tauxReussite?.toFixed(1)}%` : '–', l: 'réussite' },
             ].map(item => (
               <View key={item.l} style={[s.statBox, {
                 backgroundColor: t.surface,
@@ -107,6 +154,8 @@ export default function SAEDetailScreen() {
             ))}
           </View>
         </Animated.View>
+
+        {/* Groupes */}
         <Text style={[s.section, { color: t.text }]}>Groupes</Text>
         {sorted.map((g, i) => (
           <Animated.View key={g.id} entering={FadeInDown.delay(150 + i * 50).springify().damping(14)}>
@@ -122,15 +171,20 @@ export default function SAEDetailScreen() {
                   </View>
                 </View>
               </View>
-              <View style={[s.gradeBox, { backgroundColor: g.grade !== null ? gradeColor(g.grade, t) + '18' : t.surfaceHigh }]}>
+              <View style={[s.gradeBox, {
+                backgroundColor: g.grade !== null ? gradeColor(g.grade, t) + '18' : t.surfaceHigh,
+              }]}>
                 <Text style={[s.gradeVal, { color: gradeColor(g.grade, t) }]}>
                   {g.grade !== null ? g.grade.toFixed(2) : 'CAN'}
                 </Text>
-                {g.grade !== null && <Text style={[s.gradeSub, { color: gradeColor(g.grade, t) }]}>/20</Text>}
+                {g.grade !== null && (
+                  <Text style={[s.gradeSub, { color: gradeColor(g.grade, t) }]}>/20</Text>
+                )}
               </View>
             </View>
           </Animated.View>
         ))}
+
         <View style={{ height: 48 }} />
       </Animated.ScrollView>
     </View>
@@ -138,28 +192,37 @@ export default function SAEDetailScreen() {
 }
 
 const s = StyleSheet.create({
-  root:     { flex: 1 },
-  scroll:   { paddingHorizontal: 18 },
-  notFound: { textAlign: 'center', marginTop: 80, fontSize: 15 },
-  back:     { marginBottom: 16 },
-  backText: { fontSize: 14, fontWeight: '600' },
-  hero:     { borderRadius: 20, padding: 18, borderWidth: 1, gap: 7, marginBottom: 16 },
-  domTag:   { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 9, paddingVertical: 4 },
-  domText:  { fontSize: 12, fontWeight: '700' },
-  code:     { fontSize: 11, letterSpacing: 0.5, textTransform: 'uppercase' },
-  heroName: { fontSize: 24, fontWeight: '900', letterSpacing: -0.5 },
-  heroBadge:{ fontSize: 13 },
-  desc:     { fontSize: 13, lineHeight: 20, marginTop: 4 },
-  statsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
-  statBox:  { borderRadius: 12, padding: 12, borderWidth: 1, alignItems: 'center', minWidth: 80, flex: 1 },
-  statVal:  { fontSize: 18, fontWeight: '800' },
-  statLbl:  { fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 2 },
-  section:  { fontSize: 19, fontWeight: '800', marginBottom: 12 },
-  groupCard:{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 8 },
-  groupLeft:{ flexDirection: 'row', alignItems: 'flex-start', gap: 10, flex: 1 },
-  groupRank:{ fontSize: 12, fontWeight: '700', width: 24, paddingTop: 2 },
+  root:      { flex: 1 },
+  scroll:    { paddingHorizontal: 18 },
+  notFound:  { textAlign: 'center', marginTop: 80, fontSize: 15 },
+  back:      { marginBottom: 16 },
+  backText:  { fontSize: 14, fontWeight: '600' },
+  hero:      { borderRadius: 20, padding: 18, borderWidth: 1, gap: 8, marginBottom: 16 },
+  domTag:    { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 9, paddingVertical: 4 },
+  domText:   { fontSize: 12, fontWeight: '700' },
+  code:      { fontSize: 11, letterSpacing: 0.5, textTransform: 'uppercase' },
+  heroName:  { fontSize: 24, fontWeight: '900', letterSpacing: -0.5 },
+  heroBadge: { fontSize: 13 },
+  meta:      { fontSize: 13 },
+  desc:      { fontSize: 13, lineHeight: 20 },
+  infoBox:   { borderRadius: 10, padding: 12, gap: 4 },
+  infoLabel: { fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
+  infoValue: { fontSize: 13, lineHeight: 19 },
+  linksRow:  { flexDirection: 'row', gap: 10, marginTop: 4 },
+  linkBtn:   { borderRadius: 10, borderWidth: 1.5, paddingHorizontal: 14, paddingVertical: 7 },
+  linkText:  { fontSize: 13, fontWeight: '700' },
+  statsRow:  { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
+  statBox:   { borderRadius: 12, padding: 12, borderWidth: 1, alignItems: 'center', minWidth: 70, flex: 1 },
+  statVal:   { fontSize: 16, fontWeight: '800' },
+  statLbl:   { fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 2 },
+  section:   { fontSize: 19, fontWeight: '800', marginBottom: 12 },
+  groupCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+               borderRadius: 14, padding: 14, borderWidth: 1, marginBottom: 8 },
+  groupLeft: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, flex: 1 },
+  groupRank: { fontSize: 12, fontWeight: '700', width: 24, paddingTop: 2 },
   memberName:{ fontSize: 14, fontWeight: '600' },
-  gradeBox: { borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6, flexDirection: 'row', alignItems: 'baseline', gap: 2 },
-  gradeVal: { fontSize: 20, fontWeight: '900' },
-  gradeSub: { fontSize: 11 },
+  gradeBox:  { borderRadius: 10, paddingHorizontal: 12, paddingVertical: 6,
+               flexDirection: 'row', alignItems: 'baseline', gap: 2 },
+  gradeVal:  { fontSize: 20, fontWeight: '900' },
+  gradeSub:  { fontSize: 11 },
 });
