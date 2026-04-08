@@ -72,7 +72,7 @@ function SAERow({ sae, index, t }: {
         <Text style={[row.name, { color: t.text }]}>{sae.name}</Text>
         <View style={row.foot}>
           <Text style={[row.meta, { color: t.textSub }]}>
-            {sae.stats.total} étudiants · {sae.groups.length} groupes
+            {sae.stats.total} étudiants
           </Text>
           <Text style={[row.avg, { color: t.accent }]}>
             ⌀ {sae.stats.avg?.toFixed(2) ?? '–'}

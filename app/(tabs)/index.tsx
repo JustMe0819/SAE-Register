@@ -1,18 +1,27 @@
-import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Dimensions, StatusBar, Image,
-} from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme, DOMAIN_META } from '../../constants/theme';
-import { API } from '../../constants/api';
-import type { SaeDTO } from '../../constants/types';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  Dimensions,
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import Animated, {
-  useSharedValue, useAnimatedStyle, withTiming,
-  withDelay, withSpring, interpolate,
-  useAnimatedScrollHandler, Easing, FadeInDown,
+  Easing, FadeInDown,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay, withSpring,
+  withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { API } from '../../constants/api';
+import { DOMAIN_META, useTheme } from '../../constants/theme';
+import type { SaeDTO } from '../../constants/types';
 
 const { width } = Dimensions.get('window');
 const COL = (width - 48 - 10) / 2;
@@ -112,7 +121,7 @@ function SAECard({ sae, index, t }: {
           <Text style={[scard.tagText, { color: meta.color }]}>{meta.icon} {sae.domain}</Text>
         </View>
         {sae.illustration && (
-          <Image source={{ uri: sae.illustration }} style={scard.image} />
+          <Image source={{ uri: 'http://localhost:8080' + sae.illustration }} style={scard.image} />
         )}
         <Text style={[scard.code, { color: t.textMuted }]}>{sae.code}</Text>
         <Text style={[scard.name, { color: t.text }]} numberOfLines={2}>{sae.name}</Text>
@@ -123,8 +132,8 @@ function SAECard({ sae, index, t }: {
         <View style={scard.stats}>
           {[
             { v: sae.stats.avg?.toFixed(2) ?? '–', l: 'moy.', accent: true },
-            { v: String(sae.groups.length),          l: 'grp.' },
-            { v: String(sae.stats.total),            l: 'étu.' },
+            { v: String(sae.students.length),          l: 'étu.' },
+            { v: sae.stats.max?.toFixed(2) ?? '–', l: 'max' },
           ].map((item) => (
             <View key={item.l} style={scard.statItem}>
               <Text style={[scard.statVal, { color: item.accent ? t.accent : t.text }]}>{item.v}</Text>
@@ -236,15 +245,15 @@ export default function HomeScreen() {
 
   const totalStudents = saes.reduce((a, s) => a + (s.stats?.total ?? 0), 0);
   const allGrades = saes.flatMap(s =>
-    s.groups.filter(g => g.grade !== null).map(g => g.grade as number)
+    s.students.filter(st => st.grade !== null).map(st => st.grade as number)
   );
   const globalAvg = allGrades.length
     ? allGrades.reduce((a, b) => a + b, 0) / allGrades.length
     : 0;
 
   const top5 = saes
-    .flatMap(sae => sae.groups.filter(g => g.grade !== null).map(g => ({ g, sae })))
-    .sort((a, b) => (b.g.grade ?? 0) - (a.g.grade ?? 0))
+    .flatMap(sae => sae.students.filter(st => st.grade !== null).map(st => ({ st, sae })))
+    .sort((a, b) => (b.st.grade ?? 0) - (a.st.grade ?? 0))
     .slice(0, 5);
 
   return (
@@ -331,12 +340,12 @@ export default function HomeScreen() {
         {/* Top groupes */}
         {top5.length > 0 && (
           <View style={s.section}>
-            <Text style={[s.sectionTitle, { color: t.text }]}>Top groupes</Text>
-            {top5.map(({ g, sae }, i) => {
+            <Text style={[s.sectionTitle, { color: t.text }]}>Top étudiants</Text>
+            {top5.map(({ st, sae }, i) => {
               const meta = DOMAIN_META[sae.domain] ?? DOMAIN_META['Autre'];
               return (
                 <Animated.View
-                  key={`${sae.id}-${g.id}`}
+                  key={`${sae.id}-${st.id}`}
                   entering={FadeInDown.delay(700 + i * 60).springify()}
                 >
                   <TouchableOpacity
@@ -351,14 +360,14 @@ export default function HomeScreen() {
                     </Text>
                     <View style={{ flex: 1 }}>
                       <Text style={[s.topName, { color: t.text }]} numberOfLines={1}>
-                        {g.members.join(' · ')}
+                        {st.fullName}
                       </Text>
                       <Text style={[s.topMeta, { color: t.textSub }]}>
-                        {sae.code} · {sae.domain}
+                        {sae.code} · {sae.domain} · {sae.year}
                       </Text>
                     </View>
                     <Text style={[s.topGrade, { color: i === 0 ? t.accent : t.text }]}>
-                      {g.grade?.toFixed(2)}
+                      {st.grade?.toFixed(2)}
                     </Text>
                   </TouchableOpacity>
                 </Animated.View>

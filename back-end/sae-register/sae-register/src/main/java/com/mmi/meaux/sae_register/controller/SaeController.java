@@ -32,4 +32,13 @@ public class SaeController {
     public ResponseEntity<SaeDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(saeService.getById(id));
     }
+
+    // PUT /api/saes/students/1
+    @PutMapping("/students/{id}")
+    public ResponseEntity<Void> updateStudent(@PathVariable Long id, @RequestBody UpdateStudentRequest request) {
+        saeService.updateStudent(id, request.siteUrl(), request.repoUrl());
+        return ResponseEntity.ok().build();
+    }
 }
+
+record UpdateStudentRequest(String siteUrl, String repoUrl) {}

@@ -24,24 +24,24 @@ public class ImportController {
             @RequestParam("code")                                    String code,
             @RequestParam("name")                                    String name,
             @RequestParam("year")                                    String year,
-            @RequestParam("semester")                                int semester,
+            @RequestParam("semester")                                String semesterStr,
             @RequestParam("domain")                                  String domain,
             @RequestParam("ue")                                      String ue,
             @RequestParam(value = "description",  defaultValue = "") String description,
             @RequestParam(value = "competences",  defaultValue = "") String competences,
             @RequestParam(value = "dateDebut",    defaultValue = "") String dateDebut,
             @RequestParam(value = "dateFin",      defaultValue = "") String dateFin,
-            @RequestParam(value = "siteUrl",      defaultValue = "") String siteUrl,
-            @RequestParam(value = "repoUrl",      defaultValue = "") String repoUrl,
             @RequestParam(value = "illustration", required = false) MultipartFile illustration
     ) {
         try {
+            int semester = Integer.parseInt(semesterStr);
             Sae sae = importService.importFile(
                 file, code, name, year, semester, domain, ue,
-                description, competences, dateDebut, dateFin, siteUrl, repoUrl, illustration
+                description, competences, dateDebut, dateFin, illustration
             );
             return ResponseEntity.ok(saeService.getById(sae.getId()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }

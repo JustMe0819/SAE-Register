@@ -1,17 +1,17 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState, useEffect } from 'react';
-import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
-import { useTheme, DOMAIN_META } from '../constants/theme';
 import { API } from '../constants/api';
+import { DOMAIN_META, useTheme } from '../constants/theme';
 import type { SaeDTO } from '../constants/types';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 
 // Composant séparé pour chaque ligne → les hooks sont appelés au niveau composant
-function RankRow({ g, sae, index, t }: {
-  g: any; sae: SaeDTO; index: number; t: ReturnType<typeof useTheme>;
+function RankRow({ st, sae, index, t }: {
+  st: any; sae: SaeDTO; index: number; t: ReturnType<typeof useTheme>;
 }) {
   const router = useRouter();
   const meta   = DOMAIN_META[sae.domain] ?? DOMAIN_META['Autre'];
@@ -32,7 +32,7 @@ function RankRow({ g, sae, index, t }: {
         </Text>
         <View style={{ flex: 1 }}>
           <Text style={[s.members, { color: t.text }]} numberOfLines={1}>
-            {g.members.join(' · ')}
+            {st.fullName}
           </Text>
           <View style={s.meta}>
             <View style={[s.domPill, { backgroundColor: meta.color + '20' }]}>
@@ -42,7 +42,7 @@ function RankRow({ g, sae, index, t }: {
           </View>
         </View>
         <Text style={[s.grade, { color: index === 0 ? t.accent : t.text }]}>
-          {g.grade?.toFixed(2)}
+          {st.grade?.toFixed(2)}
         </Text>
       </TouchableOpacity>
     </Animated.View>
@@ -62,8 +62,8 @@ export default function RankingScreen() {
 
   const all = saes
     .filter(s => filter === 'Tous' || s.year === filter)
-    .flatMap(sae => sae.groups.filter(g => g.grade !== null).map(g => ({ g, sae })))
-    .sort((a, b) => (b.g.grade ?? 0) - (a.g.grade ?? 0));
+    .flatMap(sae => sae.students.filter(st => st.grade !== null).map(st => ({ st, sae })))
+    .sort((a, b) => (b.st.grade ?? 0) - (a.st.grade ?? 0));
 
   return (
     <View style={[s.root, { backgroundColor: t.bg, paddingTop: insets.top }]}>
@@ -93,8 +93,8 @@ export default function RankingScreen() {
       </View>
 
       <ScrollView contentContainerStyle={s.list} showsVerticalScrollIndicator={false}>
-        {all.map(({ g, sae }, i) => (
-          <RankRow key={`${sae.id}-${g.id}`} g={g} sae={sae} index={i} t={t} />
+        {all.map(({ st, sae }, i) => (
+          <RankRow key={`${sae.id}-${st.id}`} st={st} sae={sae} index={i} t={t} />
         ))}
         {all.length === 0 && (
           <Text style={[s.empty, { color: t.textMuted }]}>Aucune donnée</Text>

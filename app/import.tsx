@@ -1,16 +1,26 @@
-import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  ActivityIndicator, Platform, TextInput,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState, useRef } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
+import { useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
+import {
+  ActivityIndicator, Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
-  useSharedValue, useAnimatedStyle, withSpring, FadeInDown, FadeIn, ZoomIn,
+  FadeIn,
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  ZoomIn,
 } from 'react-native-reanimated';
-import { useTheme, DOMAIN_META } from '../constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { API } from '../constants/api';
+import { DOMAIN_META, useTheme } from '../constants/theme';
 import type { SaeDTO } from '../constants/types';
 
 const DOMAINS = Object.keys(DOMAIN_META).filter(d => d !== 'Autre');
@@ -46,8 +56,6 @@ export default function ImportScreen() {
   const [competences, setCompetences] = useState('');
   const [dateDebut, setDateDebut] = useState('');
   const [dateFin, setDateFin] = useState('');
-  const [siteUrl, setSiteUrl] = useState('');
-  const [repoUrl, setRepoUrl] = useState('');
 
   const zoneScale = useSharedValue(1);
   const zoneAnim  = useAnimatedStyle(() => ({ transform: [{ scale: zoneScale.value }] }));
@@ -163,8 +171,6 @@ export default function ImportScreen() {
       formData.append('competences', competences);
       formData.append('dateDebut', dateDebut);
       formData.append('dateFin', dateFin);
-      formData.append('siteUrl', siteUrl);
-      formData.append('repoUrl', repoUrl);
 
       const res = await fetch(API.import, {
         method: 'POST',
@@ -336,16 +342,6 @@ export default function ImportScreen() {
           <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
             placeholder="YYYY-MM-DD" placeholderTextColor={t.textMuted}
             value={dateFin} onChangeText={setDateFin} />
-
-          <Text style={[s.fieldLabel, { color: t.textMuted }]}>URL du site (optionnel)</Text>
-          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="https://..." placeholderTextColor={t.textMuted}
-            value={siteUrl} onChangeText={setSiteUrl} />
-
-          <Text style={[s.fieldLabel, { color: t.textMuted }]}>URL du repo (optionnel)</Text>
-          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="https://github.com/..." placeholderTextColor={t.textMuted}
-            value={repoUrl} onChangeText={setRepoUrl} />
         </Animated.View>
 
         {/* Erreur */}
@@ -375,7 +371,7 @@ export default function ImportScreen() {
             style={[s.resultBox, { backgroundColor: t.surface, borderColor: t.accent + '66' }]}>
             <Text style={[s.resultTitle, { color: t.text }]}>✅ {result.code} importée !</Text>
             <Text style={[s.resultSub, { color: t.textSub }]}>
-              {result.groups.length} groupes · {result.stats.total} étudiants
+              {result.stats.total} étudiants importés
             </Text>
             <TouchableOpacity
               style={[s.viewBtn, { borderColor: t.accent }]}

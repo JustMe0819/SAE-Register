@@ -3,7 +3,9 @@ package com.mmi.meaux.sae_register.service;
 import com.mmi.meaux.sae_register.dto.SaeDTO;
 import com.mmi.meaux.sae_register.dto.SaeDTO.StudentDTO;
 import com.mmi.meaux.sae_register.entity.Sae;
+import com.mmi.meaux.sae_register.entity.Student;
 import com.mmi.meaux.sae_register.repository.SaeRepository;
+import com.mmi.meaux.sae_register.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.OptionalDouble;
 public class SaeService {
 
     private final SaeRepository saeRepository;
+    private final StudentRepository studentRepository;
 
     public List<SaeDTO> getAll(String year, String domain) {
         List<Sae> saes;
@@ -73,8 +76,6 @@ public class SaeService {
                 .competences(sae.getCompetences())
                 .dateDebut(sae.getDateDebut())
                 .dateFin(sae.getDateFin())
-                .siteUrl(sae.getSiteUrl())
-                .repoUrl(sae.getRepoUrl())
                 .illustration(sae.getIllustration())
                 .tauxReussite(Math.round(tauxReussite * 100.0) / 100.0)
                 .students(students)
@@ -86,5 +87,13 @@ public class SaeService {
                         .max(max.isPresent() ? max.getAsDouble() : null)
                         .build())
                 .build();
+    }
+
+    public void updateStudent(Long studentId, String siteUrl, String repoUrl) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Étudiant introuvable : " + studentId));
+        student.setSiteUrl(siteUrl);
+        student.setRepoUrl(repoUrl);
+        studentRepository.save(student);
     }
 }

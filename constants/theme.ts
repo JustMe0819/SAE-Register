@@ -9,6 +9,32 @@ export const DOMAIN_META: Record<string, { color: string; icon: string }> = {
   Autre:  { color: '#6B7280', icon: '📁' },
 };
 
+const light = {
+  isDark: false,
+  bg:            '#FFFFFF',
+  surface:       '#F8F9FA',
+  surfaceHigh:   '#FFFFFF',
+  border:        'rgba(0,0,0,0.06)',
+  borderStrong:  'rgba(0,0,0,0.12)',
+  text:          '#1A1A1A',
+  textSub:       '#666666',
+  textMuted:     '#999999',
+  accent:        '#E8613A',
+  accentBg:      'rgba(232,97,58,0.15)',
+  gradient:      ['#FFFFFF', '#F8F9FA'] as string[],
+  tabBar:        '#FFFFFF',
+  tabBarBorder:  'rgba(0,0,0,0.06)',
+  inputBg:       '#F8F9FA',
+  chipBg:        '#F8F9FA',
+  chipText:      '#666666',
+  chipActive:    'rgba(232,97,58,0.18)',
+  chipActiveBorder: '#E8613A',
+  chipActiveText:   '#E8613A',
+  success:       '#2CB67D',
+  warning:       '#F4A261',
+  danger:        '#E05252',
+};
+
 const dark = {
   isDark: true,
   bg:            '#0B0D14',
@@ -36,6 +62,11 @@ const dark = {
 };
 
 export type Theme = typeof dark;
+
+export const Colors = {
+  light,
+  dark,
+};
 
 export function useTheme(): Theme {
   return dark;

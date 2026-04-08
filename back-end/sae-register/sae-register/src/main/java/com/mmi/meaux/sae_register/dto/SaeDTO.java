@@ -18,8 +18,6 @@ public class SaeDTO {
     private String competences;
     private String dateDebut;
     private String dateFin;
-    private String siteUrl;
-    private String repoUrl;
     private String illustration;
     private Double tauxReussite;
     private List<StudentDTO> students;

@@ -1,20 +1,18 @@
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState, useMemo, useEffect } from 'react';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring, FadeInDown, FadeIn } from 'react-native-reanimated';
-import { useTheme, DOMAIN_META } from '../constants/theme';
 import { API } from '../constants/api';
+import { DOMAIN_META, useTheme } from '../constants/theme';
 import type { SaeDTO } from '../constants/types';
 
 // Composant séparé pour chaque résultat → pas de hooks dans map()
-function ResultCard({ group, sae, query, t }: {
-  group: any; sae: SaeDTO; query: string; t: ReturnType<typeof useTheme>;
+function ResultCard({ student, sae, query, t }: {
+  student: any; sae: SaeDTO; query: string; t: ReturnType<typeof useTheme>;
 }) {
   const router    = useRouter();
   const meta      = DOMAIN_META[sae.domain] ?? DOMAIN_META['Autre'];
-  const matched   = group.members.filter((m: string) => m.toLowerCase().includes(query.toLowerCase()));
-  const teammates = group.members.filter((m: string) => !m.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <TouchableOpacity
@@ -30,18 +28,11 @@ function ResultCard({ group, sae, query, t }: {
       </View>
       <Text style={[s.saeName, { color: t.textSub }]}>{sae.name}</Text>
       <View style={[s.divider, { backgroundColor: t.border }]} />
-      {matched.map((m: string) => (
-        <Text key={m} style={[s.matchName, { color: t.text }]}>🎯 {m}</Text>
-      ))}
-      {teammates.length > 0 && (
-        <Text style={[s.teammates, { color: t.textSub }]}>
-          Groupe avec : {teammates.join(', ')}
-        </Text>
-      )}
+      <Text style={[s.matchName, { color: t.text }]}>🎯 {student.fullName}</Text>
       <View style={s.gradeRow}>
-        <Text style={[s.gradeLabel, { color: t.textMuted }]}>Note du groupe</Text>
-        <Text style={[s.gradeVal, { color: group.grade !== null ? t.accent : t.textMuted }]}>
-          {group.grade !== null ? `${group.grade.toFixed(2)}/20` : 'CAN'}
+        <Text style={[s.gradeLabel, { color: t.textMuted }]}>Note</Text>
+        <Text style={[s.gradeVal, { color: student.grade !== null ? t.accent : t.textMuted }]}>
+          {student.grade !== null ? `${student.grade.toFixed(2)}/20` : 'CAN'}
         </Text>
       </View>
     </TouchableOpacity>
@@ -70,9 +61,9 @@ export default function SearchScreen() {
     if (q.length < 2) return [];
     const lq = q.toLowerCase();
     return saes.flatMap(sae =>
-      sae.groups
-        .filter(g => g.members.some((m: string) => m.toLowerCase().includes(lq)))
-        .map(g => ({ group: g, sae }))
+      sae.students
+        .filter(st => st.fullName.toLowerCase().includes(lq))
+        .map(st => ({ student: st, sae }))
     );
   }, [q, saes]);
 
@@ -126,10 +117,10 @@ export default function SearchScreen() {
             Tapez au moins 2 caractères pour chercher un étudiant dans toutes les SAé.
           </Animated.Text>
         )}
-        {results.map(({ group, sae }, i) => (
-          <Animated.View key={`${sae.id}-${group.id}`}
+        {results.map(({ student, sae }, i) => (
+          <Animated.View key={`${sae.id}-${student.id}`}
             entering={FadeInDown.delay(i * 60).springify().damping(14)}>
-            <ResultCard group={group} sae={sae} query={q} t={t} />
+            <ResultCard student={student} sae={sae} query={q} t={t} />
           </Animated.View>
         ))}
         <View style={{ height: 40 }} />

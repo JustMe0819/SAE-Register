@@ -40,10 +40,6 @@ public class Sae {
 
     private String dateFin;
 
-    private String siteUrl;
-
-    private String repoUrl;
-
     private String illustration;
 
     private Double tauxReussite;

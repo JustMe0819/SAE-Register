@@ -32,8 +32,6 @@ export interface SaeDTO {
   competences: string | null;
   dateDebut: string | null;
   dateFin: string | null;
-  siteUrl: string | null;
-  repoUrl: string | null;
   illustration: string | null;
   tauxReussite: number | null;
   students: StudentDTO[];

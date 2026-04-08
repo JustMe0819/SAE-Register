@@ -27,8 +27,7 @@ public class ImportService {
     public Sae importFile(MultipartFile file, String code, String name,
                           String year, int semester, String domain, String ue,
                           String description, String competences,
-                          String dateDebut, String dateFin,
-                          String siteUrl, String repoUrl, MultipartFile illustration) throws IOException {
+                          String dateDebut, String dateFin, MultipartFile illustration) throws IOException {
 
         String illustrationUrl = null;
         if (illustration != null && !illustration.isEmpty()) {
@@ -47,8 +46,6 @@ public class ImportService {
                 .competences(competences)
                 .dateDebut(dateDebut)
                 .dateFin(dateFin)
-                .siteUrl(siteUrl)
-                .repoUrl(repoUrl)
                 .illustration(illustrationUrl)
                 .build();
         sae = saeRepository.save(sae);
@@ -59,8 +56,8 @@ public class ImportService {
             Student student = Student.builder()
                     .fullName(row.fullName())
                     .grade(row.grade())
-                    .siteUrl(siteUrl)
-                    .repoUrl(repoUrl)
+                    .siteUrl(null)
+                    .repoUrl(null)
                     .sae(sae)
                     .build();
             sae.getStudents().add(student);
