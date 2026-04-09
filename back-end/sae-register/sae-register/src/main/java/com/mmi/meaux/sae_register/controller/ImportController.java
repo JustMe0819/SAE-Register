@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/import")
 @CrossOrigin(origins = "*")
@@ -19,7 +21,7 @@ public class ImportController {
     private final SaeService saeService;
 
     @PostMapping
-    public ResponseEntity<SaeDTO> importFile(
+    public ResponseEntity<?> importFile(
             @RequestParam("file")                                    MultipartFile file,
             @RequestParam("code")                                    String code,
             @RequestParam("name")                                    String name,
@@ -42,7 +44,7 @@ public class ImportController {
             return ResponseEntity.ok(saeService.getById(sae.getId()));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 }

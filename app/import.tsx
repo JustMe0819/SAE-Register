@@ -178,7 +178,10 @@ export default function ImportScreen() {
         // PAS de Content-Type manuel — le navigateur/RN le gère avec le bon boundary
       });
 
-      if (!res.ok) throw new Error(`Erreur serveur ${res.status}`);
+      if (!res.ok) {
+        const text = (await res.text()).trim();
+        throw new Error(text || `Erreur serveur ${res.status}`);
+      }
       const data: SaeDTO = await res.json();
       setResult(data);
     } catch (e: any) {
@@ -298,15 +301,15 @@ export default function ImportScreen() {
 
         {/* Formulaire */}
         <Animated.View entering={FadeInDown.delay(150).springify()}>
-          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Code *</Text>
-          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="SAé 303" placeholderTextColor={t.textMuted}
-            value={code} onChangeText={setCode} />
-
-          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Nom *</Text>
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Titre *</Text>
           <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
             placeholder="Conception de documents web" placeholderTextColor={t.textMuted}
             value={name} onChangeText={setName} />
+            
+          <Text style={[s.fieldLabel, { color: t.textMuted }]}>Objectif *</Text>
+          <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
+            placeholder="SAE 303" placeholderTextColor={t.textMuted}
+            value={code} onChangeText={setCode} />
 
           <Text style={[s.fieldLabel, { color: t.textMuted }]}>Année</Text>
           <ChipRow options={YEARS} value={year} onChange={setYear} />
@@ -335,12 +338,12 @@ export default function ImportScreen() {
 
           <Text style={[s.fieldLabel, { color: t.textMuted }]}>Date de début (optionnel)</Text>
           <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="YYYY-MM-DD" placeholderTextColor={t.textMuted}
+            placeholder="DD-MM-AAAA" placeholderTextColor={t.textMuted}
             value={dateDebut} onChangeText={setDateDebut} />
 
           <Text style={[s.fieldLabel, { color: t.textMuted }]}>Date de fin (optionnel)</Text>
           <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="YYYY-MM-DD" placeholderTextColor={t.textMuted}
+            placeholder="DD-MM-AAAA" placeholderTextColor={t.textMuted}
             value={dateFin} onChangeText={setDateFin} />
         </Animated.View>
 
@@ -377,7 +380,7 @@ export default function ImportScreen() {
               style={[s.viewBtn, { borderColor: t.accent }]}
               onPress={() => router.push({ pathname: '/sae/[id]', params: { id: result.id } })}
             >
-              <Text style={[s.viewBtnText, { color: t.accent }]}>Voir la SAé →</Text>
+              <Text style={[s.viewBtnText, { color: t.accent }]}>Voir la SAE →</Text>
             </TouchableOpacity>
           </Animated.View>
         )}
