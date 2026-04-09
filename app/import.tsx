@@ -303,12 +303,12 @@ export default function ImportScreen() {
         <Animated.View entering={FadeInDown.delay(150).springify()}>
           <Text style={[s.fieldLabel, { color: t.textMuted }]}>Titre *</Text>
           <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="Conception de documents web" placeholderTextColor={t.textMuted}
+            placeholder="SAE X" placeholderTextColor={t.textMuted}
             value={name} onChangeText={setName} />
-            
+
           <Text style={[s.fieldLabel, { color: t.textMuted }]}>Objectif *</Text>
           <TextInput style={[s.input, { backgroundColor: t.inputBg, color: t.text, borderColor: t.border }]}
-            placeholder="SAE 303" placeholderTextColor={t.textMuted}
+            placeholder="Conception de documents web" placeholderTextColor={t.textMuted}
             value={code} onChangeText={setCode} />
 
           <Text style={[s.fieldLabel, { color: t.textMuted }]}>Année</Text>
